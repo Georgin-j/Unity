@@ -5,7 +5,8 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     [SerializeField] float thrust = 1000f;
-    [SerializeField] float turn = 1f; 
+    [SerializeField] float turn = 1f;
+    [SerializeField] AudioClip rocket;
     Rigidbody rb;
     AudioSource ad;
     // Start is called before the first frame update
@@ -29,7 +30,7 @@ public class Movement : MonoBehaviour
             rb.AddRelativeForce(thrust * Time.deltaTime * Vector3.up);
             if (!ad.isPlaying)
             {
-                ad.Play();
+                ad.PlayOneShot(rocket);
             }
         }
         else
