@@ -7,9 +7,14 @@ public class Movement : MonoBehaviour
     [SerializeField] float thrust = 1000f;
     [SerializeField] float turn = 1f;
     [SerializeField] AudioClip rocket;
+
+    [SerializeField] ParticleSystem thruster;
+    [SerializeField] ParticleSystem rightTurn;
+    [SerializeField] ParticleSystem leftTurn;
+
     Rigidbody rb;
     AudioSource ad;
-    // Start is called before the first frame update
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -27,30 +32,73 @@ public class Movement : MonoBehaviour
         
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(thrust * Time.deltaTime * Vector3.up);
-            if (!ad.isPlaying)
-            {
-                ad.PlayOneShot(rocket);
-            }
+            StartThrusting();
         }
         else
         {
-            ad.Stop();
+            StopThrusting();
         }
     }
+
     void ProcessorRotation()
     {
-
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Rotation(turn);
+            LeftThrusting();
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            Rotation(-turn);
+            RightThrusting();
+        }
+        else
+        {
+            StopParticles();
         }
     }
 
+    void StartThrusting()
+    {
+        rb.AddRelativeForce(thrust * Time.deltaTime * Vector3.up);
+        if (!ad.isPlaying)
+        {
+            ad.PlayOneShot(rocket);
+        }
+        if (!thruster.isEmitting)
+        {
+            thruster.Play();
+        }
+    }
+
+    void StopThrusting()
+    {
+        ad.Stop();
+        thruster.Stop();
+    }
+
+    void LeftThrusting()
+    {
+        Rotation(turn);
+        if (!leftTurn.isPlaying)
+        {
+            leftTurn.Play();
+        }
+    }
+
+    void RightThrusting()
+    {
+        Rotation(-turn);
+        if (!rightTurn.isPlaying)
+        {
+            rightTurn.Play();
+        }
+    }
+
+    private void StopParticles()
+    {
+        leftTurn.Stop();
+        rightTurn.Stop();
+    }
+ 
     void Rotation(float rotationThisFrame)
     {
         rb.freezeRotation = true;
